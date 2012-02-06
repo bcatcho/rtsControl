@@ -1,0 +1,59 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{BB12ABAB-3EE6-7828-7C5F-548FA4B7C9C4}") = "rts-controll", "Assembly-CSharp.csproj", "{3EFE4C6A-A20B-EEEA-1CB8-E553AD0A7153}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3EFE4C6A-A20B-EEEA-1CB8-E553AD0A7153}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EFE4C6A-A20B-EEEA-1CB8-E553AD0A7153}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EFE4C6A-A20B-EEEA-1CB8-E553AD0A7153}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EFE4C6A-A20B-EEEA-1CB8-E553AD0A7153}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+																					GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp-firstpass.csproj
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = None
+		$1.ResourceNamePolicy = FileName
+		$0.StandardHeader = $2
+		$2.Text = 
+		$2.IncludeInNewFiles = True
+		$0.VersionControlPolicy = $3
+		$3.inheritsSet = Mono
+		$0.ChangeLogPolicy = $4
+		$4.UpdateMode = Nearest
+		$4.inheritsSet = Mono
+		$0.TextStylePolicy = $5
+		$5.inheritsSet = null
+		$5.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $6
+		$6.IndentSwitchBody = True
+		$6.AnonymousMethodBraceStyle = NextLine
+		$6.PlaceElseOnNewLine = True
+		$6.BeforeMethodDeclarationParentheses = False
+		$6.BeforeMethodCallParentheses = False
+		$6.BeforeConstructorDeclarationParentheses = False
+		$6.BeforeDelegateDeclarationParentheses = False
+		$6.NewParentheses = False
+		$6.SpacesBeforeBrackets = False
+		$6.inheritsSet = Mono
+		$6.inheritsScope = text/x-csharp
+		$6.scope = text/x-csharp
+		$0.TextStylePolicy = $7
+		$7.FileWidth = 120
+		$7.TabWidth = 4
+		$7.inheritsSet = Mono
+		$7.inheritsScope = text/plain
+		$7.scope = text/plain
+		outputpath = ..\..\Builds
+	EndGlobalSection
+
+EndGlobal
