@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 	
 	void Awake()
 	{
-		Application.targetFrameRate = 30;
+		Application.targetFrameRate = 60;
 	}
 	
 	void Start()
@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
 		//bc.size = new Vector3(size, size, 1);
 		
 		var act = theSprite.GetComponentInChildren<GameActor>();
-		act.AddAbility(new GameActorAbilitySelectable());
+		act.AddAbility<GameActorAbilitySelectable>(); 
 		
 		return theSprite;
 	}

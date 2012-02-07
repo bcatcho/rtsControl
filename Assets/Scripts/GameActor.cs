@@ -21,11 +21,20 @@ public class GameActor : MonoBehaviour
 		return abilities.Find(act => act.HasAbility(ability)) != null;
 	}
 	
-	public void AddAbility(GameActorAbility ability)
+	public void AddAbility<T>() 
+		where T : GameActorAbility
 	{
-		var abilityFound = abilities.Find(act => act.HasAbility(ability.Name()));
+		var abilityFound = abilities.Find(act => act.GetType() == typeof(T));
 		if (abilityFound == null)                             
-			abilities.Add(ability);
+			abilities.Add(gameObject.AddComponent<T>());
+	}
+
+	public void Message(string messageName)
+	{
+		foreach (GameActorAbility a in abilities) {
+			if (a.Message(messageName))
+				break;
+		}
 	}
 	
 	void Update()

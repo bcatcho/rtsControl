@@ -80,7 +80,8 @@ NavMeshSettings:
 --- !u!1026 &6
 HierarchyState:
   m_ObjectHideFlags: 0
-  expanded: []
+  expanded:
+  - {fileID: 0}
   selection: []
   scrollposition_x: 0.000000
   scrollposition_y: 0.000000

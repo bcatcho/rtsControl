@@ -102,10 +102,17 @@ class RawInputInterpreter
 		{
 			var hitInfo = new RaycastHit();
 			var touchRay = stateMachine.lastTouch.ray;
-			var objectFound = Physics.Raycast(touchRay, out hitInfo, 2000);
+			var objectFound = Physics.Raycast(touchRay, out hitInfo, 2000f);//, LayerMask.NameToLayer("actor"));
 		
 			if (objectFound) {
 				stateMachine.trackingObject = hitInfo.collider.gameObject;
+				
+				// TODO i think we should cache references to game objects in an actor manager thing.
+				// talking to actors needs to be cached, i think. searching for components every time may be slow (reflection)
+				var actr = stateMachine.trackingObject.GetComponentInChildren<GameActor>();
+				if (actr.HasAbility("GameActorAbilitySelectable")) {
+					actr.Message("select");	
+				}
 			}	
 		}
 		
@@ -133,14 +140,15 @@ class RawInputInterpreter
 				var actr = stateMachine.trackingObject.GetComponentInChildren<GameActor>();
 				if (actr != null && actr.HasAbility("GameActorAbilitySelectable")) {
 					_timeOfTouchEnded = UnityEngine.Time.time;
+					actr.Message("select");	
 				}
 			}
 		}
 		
 		public override void Update()
 		{
-			if (Time.time - _timeOfTouchEnded > .2) {
-				Debug.Log("tap");
+			if (Time.time - _timeOfTouchEnded > .02) {
+				//Debug.Log("tap");
 				stateMachine.TransitionTo("waiting");	
 			}
 		} 
@@ -158,7 +166,7 @@ class RawInputInterpreter
 		public override void TransitionWithTouch(RawTouch touch)
 		{
 			if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled) {
-				stateMachine.TransitionTo("waiting");
+				stateMachine.TransitionTo("ending");
 			}
 			else if (touch.phase == TouchPhase.Moved) {
 				trackingObjectMover.Move2D(touch.ray.origin);
