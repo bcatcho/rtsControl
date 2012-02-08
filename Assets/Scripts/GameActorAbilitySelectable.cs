@@ -7,8 +7,31 @@ public class GameActorAbilitySelectable : GameActorAbility
 
 	void Start()
 	{
-		
+		GameMessenger.Current().Register("touchStarted", this, Message_TouchStarted);
 		_mySprite = gameObject.GetComponent<OTSprite>();
+		
+	}
+	
+	public void Message_TouchStarted(GameMessage msg)
+	{
+		ToggleSelected();
+		GameMessenger.Current().Register("touchEnded", this, Message_TouchEnded);
+		GameMessenger.Current().Register("touchMoved", this, Message_TouchMoved);	
+	}
+
+	public void Message_TouchMoved(GameMessage msg)
+	{
+		if (msg.data != null) {
+			var position = (Ray)msg.data;
+			gameObject.transform.position = position.origin; 
+		}
+	}
+	
+	public void Message_TouchEnded(GameMessage msg)
+	{
+		ToggleSelected();
+		GameMessenger.Current().Deregister("touchEnded", this);
+		GameMessenger.Current().Deregister("touchMoved", this);	
 	}
 	
 	public void ToggleSelected()

@@ -102,29 +102,20 @@ class RawInputInterpreter
 		{
 			var hitInfo = new RaycastHit();
 			var touchRay = stateMachine.lastTouch.ray;
-			var objectFound = Physics.Raycast(touchRay, out hitInfo, 2000f);//, LayerMask.NameToLayer("actor"));
+			int mask = 1 << LayerMask.NameToLayer("actor");
+			var objectFound = Physics.Raycast(touchRay, out hitInfo, 2000f, mask);
 		
 			if (objectFound) {
-				stateMachine.trackingObject = hitInfo.collider.gameObject;
-				
-				// TODO i think we should cache references to game objects in an actor manager thing.
-				// talking to actors needs to be cached, i think. searching for components every time may be slow (reflection)
-				var actr = stateMachine.trackingObject.GetComponentInChildren<GameActor>();
-				if (actr.HasAbility("GameActorAbilitySelectable")) {
-					actr.Message("select");	
-				}
+				GameMessenger.Send("touchStarted", stateMachine, null);
 			}	
 		}
 		
 		public override void TransitionWithTouch(RawTouch touch)
 		{
-			if (touch.phase == TouchPhase.Ended && stateMachine.trackingObject != null) {
-				stateMachine.TransitionTo("ending");
+			if (touch.phase == TouchPhase.Ended) {
+				stateMachine.TransitionTo("ending");	
 			}
-			else if (touch.phase == TouchPhase.Ended) {
-				stateMachine.TransitionTo("waiting");	
-			}
-			else if (touch.phase == TouchPhase.Moved && stateMachine.trackingObject != null) {
+			else if (touch.phase == TouchPhase.Moved) {
 				stateMachine.TransitionTo("dragging");
 			}
 		}
@@ -137,39 +128,32 @@ class RawInputInterpreter
 		public override void EnterState()
 		{
 			if (stateMachine.trackingObject != null) {
-				var actr = stateMachine.trackingObject.GetComponentInChildren<GameActor>();
-				if (actr != null && actr.HasAbility("GameActorAbilitySelectable")) {
-					_timeOfTouchEnded = UnityEngine.Time.time;
-					actr.Message("select");	
-				}
+				_timeOfTouchEnded = Time.time;	
 			}
 		}
 		
 		public override void Update()
 		{
-			if (Time.time - _timeOfTouchEnded > .02) {
-				//Debug.Log("tap");
-				stateMachine.TransitionTo("waiting");	
+			if (Time.time - _timeOfTouchEnded > .2) {
+				stateMachine.TransitionTo("waiting");
 			}
-		} 
+		}
+		
+		public override void ExitState()
+		{
+			GameMessenger.Send("touchEnded", stateMachine, null);	
+		}
 	}
 	
 	private class GameInputState_Dragging : GameInputState
 	{	
-		private MoverComp trackingObjectMover;
-		
-		public override void EnterState()
-		{
-			trackingObjectMover = stateMachine.trackingObject.GetComponentInChildren<MoverComp>();	
-		}
-		
 		public override void TransitionWithTouch(RawTouch touch)
 		{
 			if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled) {
 				stateMachine.TransitionTo("ending");
 			}
 			else if (touch.phase == TouchPhase.Moved) {
-				trackingObjectMover.Move2D(touch.ray.origin);
+				GameMessenger.Send("touchMoved", stateMachine, touch.ray);
 			}
 		}
 	}

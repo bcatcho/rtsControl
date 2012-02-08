@@ -106,9 +106,10 @@
      <Compile Include="Assets\Scripts\GameActor.cs" />
      <Compile Include="Assets\Scripts\GameActorAbility.cs" />
      <Compile Include="Assets\Scripts\GameActorAbilitySelectable.cs" />
+     <Compile Include="Assets\Scripts\GameActorMgr.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Scripts\GameMessenger.cs" />
      <Compile Include="Assets\Scripts\InputManager.cs" />
-     <Compile Include="Assets\Scripts\Messenger.cs" />
      <Compile Include="Assets\Scripts\MoverComp.cs" />
      <Compile Include="Assets\Scripts\StateMachine.cs" />
      <None Include="Assets\Orthello\-Read-Me.txt" />
