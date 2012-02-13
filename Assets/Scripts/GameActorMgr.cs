@@ -11,7 +11,7 @@ public class GameActorMgr : MonoBehaviour
 		GameMessenger.Current().Register("spawnActor", this, Message_spawnActor);
 	}
 	
-	public void Message_spawnActor(GameMessage msg)
+	public GameMessageResult Message_spawnActor(GameMessage msg)
 	{
 		string actorName = msg.data as string;
 		var actorToSpawn = sceneActors.Find(actr => actr.name == actorName);
@@ -21,6 +21,8 @@ public class GameActorMgr : MonoBehaviour
 		else {
 			Debug.LogWarning("could not find actor " + actorName);	
 		}
+		
+		return GameMessageResult.handledMessage;
 	}
 
 	// Update is called once per frame
@@ -37,10 +39,6 @@ public class GameActorMgr : MonoBehaviour
 		// update the bounding collider
 		var ot = theSprite.GetComponentInChildren<OTSprite>();
 		ot.size = new Vector2(size, size);
-		//bc.size = new Vector3(size, size, 1);
-		
-		var act = theSprite.GetComponentInChildren<GameActor>();
-		act.AddAbility<GameActorAbilitySelectable>(); 
 		
 		return theSprite;
 	}

@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public delegate void GameMessageReciever(GameMessage msg);
+public delegate GameMessageResult GameMessageReciever(GameMessage msg);
 
 public class GameMessage
 {
@@ -12,18 +12,19 @@ public class GameMessage
 	public object data;
 }
 
+public enum GameMessageResult
+{
+	handledMessage,
+	didNotHandleMessage
+}
+
 public class GameMessenger : MonoBehaviour
 {
-	// [X]two queues for messages
-	//		-- abscracted into "MessageQueue"
-	// registering/deregistering listeners
-	// logging
-	// dictionary of messageName to delegate
 	private static GameMessenger _current;
 	private GameMessageQueue<GameMessage> _queue;
-	private Dictionary<string, Dictionary<object, GameMessageReciever>> _listeners;
-	private Queue<KeyValuePair<Dictionary<object, GameMessageReciever>, object>> _listenersToRemove;
+	private Dictionary<string, GameMessageReciever> _listeners;
 	
+#region Static Methods
 	public static void Send(string messageName, Object sender, object data)
 	{
 		var msg = new GameMessage() {
@@ -45,34 +46,68 @@ public class GameMessenger : MonoBehaviour
 		_current.Send(msg);
 	}
 	
+	/// <summary>
+	/// 	Convenience static method for Register
+	/// </summary>
+	/// <param name='messageName'>
+	/// Message name.
+	/// </param>
+	/// <param name='instance'>
+	/// Object Instance that holds the delegate.
+	/// </param>
+	/// <param name='del'>
+	/// The delegate that will recieve the messages
+	/// </param>
+	public static void Reg(string messageName, object instance, GameMessageReciever del)
+	{
+		_current.Register(messageName, instance, del);	
+	}
+	
+	/// <summary>
+	/// Convenience static method for Deregister
+	/// </summary>
+	/// <param name='messageName'>
+	/// The message name
+	/// </param>
+	/// <param name='instance'>
+	/// The object instance that contains the delegate
+	/// </param>
+	/// <param name='del'>
+	/// The delegate that handles the message
+	/// </param>
+	public static void DeReg(string messageName, GameMessageReciever del)
+	{
+		_current.Deregister(messageName, del);
+	}
+	
 	public static GameMessenger Current()
 	{
 		return _current;	
 	}
+ #endregion
 	
 	void Start()
 	{
 		_current = this;
 		_queue = new GameMessageQueue<GameMessage>();
-		_listeners = new Dictionary<string, Dictionary<object, GameMessageReciever>>();
-		_listenersToRemove = new Queue<KeyValuePair<Dictionary<object, GameMessageReciever>, object>>();
+		_listeners = new Dictionary<string, GameMessageReciever>();
 	}
 	
 	public void Register(string messageName, object instance, GameMessageReciever del)
 	{
 		if (!_listeners.ContainsKey(messageName)) {
-			_listeners.Add(messageName, new Dictionary<object, GameMessageReciever>());	
+			GameMessageReciever gmrDelegate = null;
+			_listeners.Add(messageName, gmrDelegate);	
 		}
 		
-		_listeners[messageName].Add(instance, del);
+		_listeners[messageName] += del;
 	}
 	
-	public void Deregister(string messageName, object instance)
+	public void Deregister(string messageName, GameMessageReciever del)
 	{
 		if (_listeners.ContainsKey(messageName)) {
-			if (_listeners[messageName].ContainsKey(instance)) {
-				_listenersToRemove.Enqueue(new KeyValuePair<Dictionary<object, GameMessageReciever>, object>(_listeners[messageName], instance));
-			}
+			if (_listeners[messageName] != null)
+				_listeners[messageName] -= del;
 		}	
 	}
 	
@@ -84,47 +119,20 @@ public class GameMessenger : MonoBehaviour
 	void Update()
 	{
 		foreach (GameMessage msg in _queue) {
-			if (msg.name != null) {
-				if (msg.reciever != null)
-					HandleMessage(msg);
-				else
-					BroadcastMessage(msg);	
-			}
+			BroadcastMessage(msg);	
 		}
 	}
 
 	private void HandleMessage(GameMessage msg)
 	{
-		var messageCategory = _listeners[msg.name];
-		if (messageCategory != null) {
-			var instanceMethod = messageCategory[msg.reciever];
-			
-			if (instanceMethod != null) {
-				instanceMethod(msg);
-				ProcessQueuedDeregisterRequests();
-			}
-		}
 	}
 
 	private	void BroadcastMessage(GameMessage msg)
 	{
 		if (_listeners.ContainsKey(msg.name)) {
 			var messageCategory = _listeners[msg.name];
-			
-			foreach (KeyValuePair<object,GameMessageReciever> instanceMethodPair in messageCategory) {
-				instanceMethodPair.Value(msg);
-			}
-			
-			// events can deregister so process those queued up
-			ProcessQueuedDeregisterRequests();
-		}
-	}
-	
-	private void ProcessQueuedDeregisterRequests()
-	{
-		while (_listenersToRemove.Count > 0) {
-			var item = _listenersToRemove.Dequeue();
-			item.Key.Remove(item.Value);
+			if (messageCategory != null)
+				messageCategory(msg);
 		}
 	}
 	

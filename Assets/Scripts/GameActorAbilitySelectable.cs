@@ -7,58 +7,41 @@ public class GameActorAbilitySelectable : GameActorAbility
 
 	void Start()
 	{
-		GameMessenger.Current().Register("touchStarted", this, Message_TouchStarted);
+		GameMessenger.Reg("touchStarted", this, Message_TouchStarted);
 		_mySprite = gameObject.GetComponent<OTSprite>();
 		
 	}
 	
-	public void Message_TouchStarted(GameMessage msg)
+	public GameMessageResult Message_TouchStarted(GameMessage msg)
 	{
 		ToggleSelected();
-		GameMessenger.Current().Register("touchEnded", this, Message_TouchEnded);
-		GameMessenger.Current().Register("touchMoved", this, Message_TouchMoved);	
+		GameMessenger.Reg("touchEnded", this, Message_TouchEnded);
+		GameMessenger.Reg("touchMoved", this, Message_TouchMoved);	
+		return GameMessageResult.handledMessage;
 	}
 
-	public void Message_TouchMoved(GameMessage msg)
+	public GameMessageResult Message_TouchMoved(GameMessage msg)
 	{
 		if (msg.data != null) {
 			var position = (Ray)msg.data;
 			gameObject.transform.position = position.origin; 
 		}
+		return GameMessageResult.handledMessage; 
 	}
 	
-	public void Message_TouchEnded(GameMessage msg)
+	public GameMessageResult Message_TouchEnded(GameMessage msg)
 	{
 		ToggleSelected();
-		GameMessenger.Current().Deregister("touchEnded", this);
-		GameMessenger.Current().Deregister("touchMoved", this);	
+		GameMessenger.DeReg("touchEnded", Message_TouchEnded);
+		GameMessenger.DeReg("touchMoved", Message_TouchMoved);	
+		return GameMessageResult.handledMessage;
 	}
 	
-	public void ToggleSelected()
+	private void ToggleSelected()
 	{
 		_isSelected = !_isSelected;
 		float scaledSize = (_isSelected) ? 1.1f : (1f / 1.1f);
 		 
 		_mySprite.size = _mySprite.size * scaledSize;
-	}
-	
-	public override string Name()
-	{
-		return "GameActorAbilitySelectable";	
-	}
-	
-	public override bool HasAbility(string ability)
-	{
-		return ability == Name();
-	}
-	
-	public override bool Message(string messageName)
-	{
-		switch (messageName) {
-			case "select":
-				ToggleSelected();
-				return true;
-		}
-		return false;
 	}
 }

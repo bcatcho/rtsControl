@@ -80,8 +80,7 @@ NavMeshSettings:
 --- !u!1026 &6
 HierarchyState:
   m_ObjectHideFlags: 0
-  expanded:
-  - {fileID: 0}
+  expanded: []
   selection: []
   scrollposition_x: 0.000000
   scrollposition_y: 0.000000
@@ -243,7 +242,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1293465395}
   m_LocalRotation: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
-  m_LocalPosition: {x: 0.000000, y: 5.270111, z: -1001.000000}
+  m_LocalPosition: {x: 0.000000, y: 0.000000, z: -1001.000000}
   m_LocalScale: {x: 1.000000, y: 1.000000, z: 1.000000}
   m_LocalEulerAnglesHint: {x: 0.000000, y: 0.000000, z: 0.000000}
   m_Children: []
@@ -256,8 +255,8 @@ Camera:
   m_GameObject: {fileID: 1293465395}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.192157, g: 0.301961, b: 0.474510, a: 0.019608}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.258502, g: 0.377790, b: 0.474510, a: 0.019608}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0.000000
@@ -391,7 +390,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcb3151926952d240ba095713745f034, type: 1}
   m_Name: 
   _zoom: 0.000000
-  _position: {x: 0.000000, y: 5.270111}
+  _position: {x: 0.000000, y: 0.000000}
   _rotation: 0.000000
   _movementTarget: {fileID: 0}
   _rotationTarget: {fileID: 0}
