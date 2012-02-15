@@ -106,7 +106,7 @@ class RawInputInterpreter
 			var objectFound = Physics.Raycast(touchRay, out hitInfo, 2000f, mask);
 		
 			if (objectFound) {
-				GameMessenger.Send("touchStarted", stateMachine, null);
+				GameMessenger.SendNow("touchStarted", stateMachine, null);
 			}	
 		}
 		
@@ -141,7 +141,7 @@ class RawInputInterpreter
 		
 		public override void ExitState()
 		{
-			GameMessenger.Send("touchEnded", stateMachine, null);	
+			GameMessenger.SendNow("touchEnded", stateMachine, null);	
 		}
 	}
 	
@@ -153,7 +153,7 @@ class RawInputInterpreter
 				stateMachine.TransitionTo("ending");
 			}
 			else if (touch.phase == TouchPhase.Moved) {
-				GameMessenger.Send("touchMoved", stateMachine, touch.ray);
+				GameMessenger.SendNow("touchMoved", stateMachine, touch.ray);
 			}
 		}
 	}

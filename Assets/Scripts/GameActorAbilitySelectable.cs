@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GameActorAbilitySelectable : GameActorAbility
+public class GameActorAbilitySelectable : MonoBehaviour
 {
 	private bool _isSelected = false;
 	private OTSprite _mySprite;

@@ -1,8 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/GameMessenger.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/GameManager.cs">
     <Files>
-      <File FileName="Assets/Scripts/GameMessenger.cs" Line="27" Column="7" />
+      <File FileName="Assets/Scripts/GameActorAbilitySelectable.cs" Line="5" Column="29" />
+      <File FileName="Assets/Scripts/GameManager.cs" Line="13" Column="20" />
+      <File FileName="Assets/Scripts/CTGameInput/InputManager.cs" Line="16" Column="21" />
+      <File FileName="Assets/Scripts/CTGameInput/CTGestureController.cs" Line="20" Column="2" />
+      <File FileName="Assets/Scripts/CTGameInput/CTGestureInterpreter.cs" Line="10" Column="15" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

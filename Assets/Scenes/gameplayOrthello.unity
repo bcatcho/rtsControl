@@ -80,7 +80,8 @@ NavMeshSettings:
 --- !u!1026 &6
 HierarchyState:
   m_ObjectHideFlags: 0
-  expanded: []
+  expanded:
+  - {fileID: 971638755}
   selection: []
   scrollposition_x: 0.000000
   scrollposition_y: 0.000000
@@ -130,6 +131,26 @@ Prefab:
     - target: {fileID: 11400002, guid: 711aeb00936dc444ab148e3338a933c7, type: 2}
       propertyPath: _alwaysPixelPerfect
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 711aeb00936dc444ab148e3338a933c7, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: 711aeb00936dc444ab148e3338a933c7, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 100008, guid: 711aeb00936dc444ab148e3338a933c7, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 711aeb00936dc444ab148e3338a933c7, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 100006, guid: 711aeb00936dc444ab148e3338a933c7, type: 2}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 711aeb00936dc444ab148e3338a933c7, type: 2}

@@ -45,6 +45,16 @@ public class GameMessenger : MonoBehaviour
 		};
 		_current.Send(msg);
 	}
+
+	public static void SendNow(string messageName, Object sender, object data)
+	{
+		var msg = new GameMessage() {
+			name = messageName,
+			sender = sender,
+			data = data
+		};
+		_current.BroadcastMessage(msg);
+	}
 	
 	/// <summary>
 	/// 	Convenience static method for Register
