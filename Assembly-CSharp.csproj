@@ -44,6 +44,17 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\CTScripts\CTGameInput\CTGestureController.cs" />
+     <Compile Include="Assets\CTScripts\CTGameInput\CTGestureInterpreter.cs" />
+     <Compile Include="Assets\CTScripts\CTGameInput\InputManager.cs" />
+     <Compile Include="Assets\CTScripts\CTTest\CTTestInputRecorder.cs" />
+     <Compile Include="Assets\CTScripts\GameActor.cs" />
+     <Compile Include="Assets\CTScripts\GameActorAbilitySelectable.cs" />
+     <Compile Include="Assets\CTScripts\GameActorMgr.cs" />
+     <Compile Include="Assets\CTScripts\GameManager.cs" />
+     <Compile Include="Assets\CTScripts\GameMessenger.cs" />
+     <Compile Include="Assets\CTScripts\MoverComp.cs" />
+     <Compile Include="Assets\CTScripts\StateMachine.cs" />
      <Compile Include="Assets\Orthello\Standard Assets\OT\Graphics\OTView.cs" />
      <Compile Include="Assets\Orthello\Standard Assets\OT\Graphics\Sprites\Atlas\OTAtlasData.cs" />
      <Compile Include="Assets\Orthello\Standard Assets\OT\Graphics\Sprites\Atlas\OTSpriteAtlas.cs" />
@@ -103,16 +114,6 @@
      <Compile Include="Assets\Orthello\Standard Assets\OT\_Base\OTObject.cs" />
      <Compile Include="Assets\Orthello\Standard Assets\OT\_Base\OTObjectType.cs" />
      <Compile Include="Assets\Orthello\Standard Assets\OT\_Base\OTTimeCycle.cs" />
-     <Compile Include="Assets\Scripts\CTGameInput\CTGestureController.cs" />
-     <Compile Include="Assets\Scripts\CTGameInput\CTGestureInterpreter.cs" />
-     <Compile Include="Assets\Scripts\CTGameInput\InputManager.cs" />
-     <Compile Include="Assets\Scripts\GameActor.cs" />
-     <Compile Include="Assets\Scripts\GameActorAbilitySelectable.cs" />
-     <Compile Include="Assets\Scripts\GameActorMgr.cs" />
-     <Compile Include="Assets\Scripts\GameManager.cs" />
-     <Compile Include="Assets\Scripts\GameMessenger.cs" />
-     <Compile Include="Assets\Scripts\MoverComp.cs" />
-     <Compile Include="Assets\Scripts\StateMachine.cs" />
      <None Include="Assets\Orthello\-Read-Me.txt" />
      <None Include="Assets\Orthello\Standard Assets\OT\_Base\TintedAlpha.shader" />
   </ItemGroup>

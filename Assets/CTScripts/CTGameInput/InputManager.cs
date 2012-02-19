@@ -2,7 +2,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-class RawTouch
+[System.Serializable]
+public class RawTouch
 {
 	public Ray ray;
 	public Vector2 deltaPosition;
@@ -11,6 +12,7 @@ class RawTouch
 	public TouchPhase phase;
 	public Vector2 position;
 	public int tapCount;
+	public float time;
 }
 
 public class InputManager : MonoBehaviour
@@ -27,14 +29,12 @@ public class InputManager : MonoBehaviour
 	
 	void Update()
 	{
-		List<RawTouch> rawInput = CollectRawInput();
-		rawInputInterpreter.InterperetInput(rawInput);
+		CollectRawInput();
 		rawInputInterpreter.Update();
 	}
 	
-	private List<RawTouch> CollectRawInput()
+	private void CollectRawInput()
 	{
-		List<RawTouch> touches = new List<RawTouch>(); // TODO is this too slow?
 		foreach (Touch touch in Input.touches) {
 			RawTouch rawTouch = new RawTouch()
 			{
@@ -42,14 +42,13 @@ public class InputManager : MonoBehaviour
 				deltaTime = touch.deltaTime,
 				fingerId = touch.fingerId,
 				phase = touch.phase,
-				tapCount = touch.tapCount
+				tapCount = touch.tapCount,
+				time = Time.time
 			};
 			rawTouch.ray = _currentCamera.ScreenPointToRay(touch.position);
 			rawTouch.position = rawTouch.ray.origin;
-			touches.Add(rawTouch);
+			GameMessenger.SendNow("touch", this, rawTouch);
 		}
-		
-		return touches;
 	}	
 }
 
@@ -59,6 +58,7 @@ class RawInputInterpreter
 	
 	public RawInputInterpreter()
 	{
+		GameMessenger.Reg("touch", this, Message_Touch);
 		_interpretState = new GameInputStateMachine();
 		_interpretState.AddState("waiting", new GameInputState_Waiting());
 		_interpretState.AddState("began", new GameInputState_Began());
@@ -67,12 +67,17 @@ class RawInputInterpreter
 		_interpretState.TransitionTo("waiting");
 	}
 	
-	public void InterperetInput(List<RawTouch> touches)
+	public GameMessageResult Message_Touch(GameMessage msg)
 	{
-		foreach (var touch in touches) {
-			if (touch.fingerId == 0) {
-				_interpretState.TransitionWithTouch(touch);
-			}
+		var touch = (RawTouch)msg.data;
+		InterperetInput(touch);
+		return GameMessageResult.handledMessage;
+	}
+	
+	public void InterperetInput(RawTouch touch)
+	{
+		if (touch.fingerId == 0) {
+			_interpretState.TransitionWithTouch(touch);
 		}
 	}
 
