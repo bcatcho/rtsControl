@@ -6,7 +6,8 @@ using System.Collections.Generic;
 public class RawTouch
 {
 	public Ray ray;
-	public Vector2 deltaPosition;
+	public Vector3 rawPosition;
+	public Vector3 deltaPosition;
 	public float deltaTime;
 	public int fingerId;
 	public TouchPhase phase;
@@ -43,7 +44,8 @@ public class InputManager : MonoBehaviour
 				fingerId = touch.fingerId,
 				phase = touch.phase,
 				tapCount = touch.tapCount,
-				time = Time.time
+				time = Time.time,
+				rawPosition = touch.position
 			};
 			rawTouch.ray = _currentCamera.ScreenPointToRay(touch.position);
 			rawTouch.position = rawTouch.ray.origin;
@@ -108,8 +110,7 @@ class RawInputInterpreter
 			var hitInfo = new RaycastHit();
 			var touchRay = stateMachine.lastTouch.ray;
 			int mask = 1 << LayerMask.NameToLayer("actor");
-			var objectFound = Physics.Raycast(touchRay, out hitInfo, 2000f, mask);
-		
+			var objectFound = Physics.Raycast(touchRay, out hitInfo, 4000f, mask);
 			if (objectFound) {
 				GameMessenger.SendNow("touchStarted", stateMachine, null);
 			}	

@@ -47,7 +47,13 @@
      <Compile Include="Assets\CTScripts\CTGameInput\CTGestureController.cs" />
      <Compile Include="Assets\CTScripts\CTGameInput\CTGestureInterpreter.cs" />
      <Compile Include="Assets\CTScripts\CTGameInput\InputManager.cs" />
-     <Compile Include="Assets\CTScripts\CTTest\CTTestInputRecorder.cs" />
+     <Compile Include="Assets\CTScripts\CTTest\CTTestHarness.cs" />
+     <Compile Include="Assets\CTScripts\CTTest\CTTestInput\CTTestInputDisplay.cs" />
+     <Compile Include="Assets\CTScripts\CTTest\CTTestInput\CTTestInputHarness.cs" />
+     <Compile Include="Assets\CTScripts\CTTest\CTTestInput\CTTestInputPlayer.cs" />
+     <Compile Include="Assets\CTScripts\CTTest\CTTestInput\CTTestInputRecorder.cs" />
+     <Compile Include="Assets\CTScripts\CTTest\CTTestInput\CTTestInputTestCase.cs" />
+     <Compile Include="Assets\CTScripts\CTTest\CTTestInput\CTTestInputTestCaseList.cs" />
      <Compile Include="Assets\CTScripts\GameActor.cs" />
      <Compile Include="Assets\CTScripts\GameActorAbilitySelectable.cs" />
      <Compile Include="Assets\CTScripts\GameActorMgr.cs" />
@@ -127,4 +133,3 @@
   -->
   
 </Project>
-	

@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01858786d407345d0ba9e5082ca75eb6, type: 1}
+  m_Name: TestCases
+  testCases:
+  - inputHistory:
+    - rawPosition: {x: 181.617203, y: 226.658295, z: 0}
+      deltaPosition: {x: 0, y: 0, z: 0}
+      deltaTime: 0
+      fingerId: 0
+      phase: 0
+      position: {x: 49.0000191, y: 49.0000191}
+      tapCount: 1
+      time: .0199999996
+    - rawPosition: {x: 181.617203, y: 226.658295, z: 0}
+      deltaPosition: {x: 0, y: 0, z: 0}
+      deltaTime: 0
+      fingerId: 0
+      phase: 2
+      position: {x: 49.0000191, y: 49.0000191}
+      tapCount: 1
+      time: .0171160102
+    - rawPosition: {x: 186.617203, y: 226.658295, z: 0}
+      deltaPosition: {x: 0, y: 0, z: 0}
+      deltaTime: 0
+      fingerId: 0
+      phase: 2
+      position: {x: 49.0000191, y: 49.0000191}
+      tapCount: 1
+      time: .0167680383
+    - rawPosition: {x: 186.156296, y: 224.199997, z: 0}
+      deltaPosition: {x: -2.46093798, y: -2.45833302, z: 0}
+      deltaTime: .0902837515
+      fingerId: 0
+      phase: 3
+      position: {x: 49.0000191, y: 49.0000191}
+      tapCount: 1
+      time: .0175979733
+    - rawPosition: {x: 186.671906, y: 226.658295, z: 0}
+      deltaPosition: {x: 0, y: 0, z: 0}
+      deltaTime: .00683016609
+      fingerId: 0
+      phase: 2
+      position: {x: 49, y: 49}
+      tapCount: 1
+      time: .0184289813
+    - rawPosition: {x: 186.671906, y: 226.658295, z: 0}
+      deltaPosition: {x: 0, y: 0, z: 0}
+      deltaTime: .00683016609
+      fingerId: 0
+      phase: 2
+      position: {x: 49, y: 49}
+      tapCount: 1
+      time: .0170339942
+    - rawPosition: {x: 189.132797, y: 226.658295, z: 0}
+      deltaPosition: {x: 2.46093798, y: 0, z: 0}
+      deltaTime: .054267671
+      fingerId: 0
+      phase: 3
+      position: {x: 49, y: 49}
+      tapCount: 1
+      time: .0171330571
+    testCaseName: Tap
+    timeOffset: 0

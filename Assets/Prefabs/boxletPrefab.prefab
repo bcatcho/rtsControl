@@ -1,9 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!header
-SerializedFile:
-  m_TargetPlatform: 4294967294
-  m_UserInformation: 
 --- !u!1 &100000
 GameObject:
   m_ObjectHideFlags: 0
@@ -32,10 +28,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_LocalRotation: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
-  m_LocalPosition: {x: 0.000000, y: 0.000000, z: -2.830000}
-  m_LocalScale: {x: 100.000000, y: 100.000000, z: 1.000000}
-  m_LocalEulerAnglesHint: {x: 0.000000, y: 0.000000, z: 0.000000}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -2.82999992}
+  m_LocalScale: {x: 100, y: 100, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
 --- !u!1002 &400001
@@ -51,14 +47,14 @@ Renderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_LightmapIndex: 255
-  m_LightmapTilingOffset: {x: 1.000000, y: 1.000000, z: 0.000000, w: 0.000000}
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
   - {fileID: 2100000, guid: 8714fae7c684545ce9dbc6dbab669255, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_LightProbeAnchor: {fileID: 0}
   m_UseLightProbes: 0
-  m_ScaleInLightmap: 1.000000
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
 --- !u!1002 &2300001
 EditorExtensionImpl:
   serializedVersion: 6
@@ -89,40 +85,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a18d0574a4fa59946a49ede6640a1f55, type: 1}
   m_Name: 
   _name: 
-  _position: {x: 0.000000, y: 0.000000}
-  _size: {x: 100.000000, y: 100.000000}
-  _rotation: 0.000000
+  _position: {x: 0, y: 0}
+  _size: {x: 200, y: 200}
+  _rotation: 0
   _pivot: 4
-  _pivotPoint: {x: 0.000000, y: 0.000000}
+  _pivotPoint: {x: 0, y: 0}
   _registerInput: 0
   _depth: 0
   _collidable: 1
   _physics: 0
   _colliderType: 0
   _collisionDepth: 1
-  _collisionSize: -1.000000
+  _collisionSize: -1
   draggable: 0
   dragButton: 0
   init: 1
   _worldBounds:
     serializedVersion: 2
-    x: 0.000000
-    y: 0.000000
-    width: 0.000000
-    height: 0.000000
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   protoType: 
   baseName: 
-  oSize: {x: 0.000000, y: 0.000000}
-  imageSize: {x: 0.000000, y: 0.000000}
-  _offset: {x: 0.000000, y: 0.000000}
-  _baseOffset: {x: 0.000000, y: 0.000000}
+  oSize: {x: 0, y: 0}
+  imageSize: {x: 0, y: 0}
+  _offset: {x: 0, y: 0}
+  _baseOffset: {x: 0, y: 0}
   _flipHorizontal: 0
   _flipVertical: 0
   _transparent: 1
   _additive: 0
   _materialReference: transparent
-  _tintColor: {r: 1.000000, g: 1.000000, b: 1.000000, a: 1.000000}
-  _alpha: 1.000000
+  _tintColor: {r: 1, g: 1, b: 1, a: 1}
+  _alpha: 1
   _image: {fileID: 2800000, guid: 40e5ee55c545a4415810166ea41bd743, type: 1}
   _frameIndex: 0
   _spriteContainer: {fileID: 0}

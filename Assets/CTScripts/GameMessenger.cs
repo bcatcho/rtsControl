@@ -146,6 +146,22 @@ public class GameMessenger : MonoBehaviour
 		}
 	}
 	
+	
+	//TODO figure this out later
+	private	void BroadcastMessageUntilHandled(GameMessage msg)
+	{
+		if (_listeners.ContainsKey(msg.name)) {
+			var messageCategory = _listeners[msg.name];
+			if (messageCategory != null)
+			{
+				foreach(GameMessageReciever del in messageCategory.GetInvocationList())
+				{
+					Debug.Log(del.Invoke(msg));
+				}
+			}
+		}
+	}
+	
 	private class GameMessageQueue<T> : IEnumerable
 	{
 		private Queue<T> _queue;
