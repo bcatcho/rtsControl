@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// CT gesture interpreter.
@@ -12,3 +12,9 @@ public class CTGestureInterpreter : Object
 {
 
 }
+
+
+
+
+
+	
