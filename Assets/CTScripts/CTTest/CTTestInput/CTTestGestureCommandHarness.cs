@@ -179,6 +179,96 @@ public class CTTestGestureCommandHarness : CTTestHarness {
 		AssertEquals(result, CTGestureCommandResult.gestureRecognized);
 	}
 	
+	public void TestFunctionalPlayground_CombiningDelegates_Success()
+	{
+		GParse<RawTouch> td = t => t.current.phase == TouchPhase.Began ? GParserStatus.success : GParserStatus.failed;
+		GParse<RawTouch> x = t => t.current.fingerId == 0 ? GParserStatus.success : GParserStatus.failed;
+		GParse<RawTouch> td_x = td.And(x);
+		
+		var cmd = new GParserPhrase<RawTouch>().And(td_x).End();
+		cmd.Parse(new RawTouch { phase = TouchPhase.Began, fingerId = 0});
+		
+		AssertEquals(cmd.status, GParserStatus.success);
+	}
+	
+	public void TestFunctionalPlayground_CombiningDelegates_ShortCircuitFailure()
+	{
+		GParse<RawTouch> td = t => t.current.phase == TouchPhase.Began ? GParserStatus.success : GParserStatus.failed;
+		GParse<RawTouch> x = t => t.current.fingerId == 0 ? GParserStatus.success : GParserStatus.failed;
+		GParse<RawTouch> y = t => t.current.time == 0 ? GParserStatus.success : GParserStatus.failed;
+		GParse<RawTouch> tdxy = td.And(x).And(y);
+		
+		
+		var cmd = new GParserPhrase<RawTouch>().And(tdxy).End();
+		cmd.Parse(new RawTouch { phase = TouchPhase.Began, fingerId = 0, time = 1});
+		
+		AssertEquals(cmd.status, GParserStatus.failed);
+	}
+	
+	public void TestFunctionalPlayground_MakingCommands()
+	{
+		var cmd = new GParserPhrase<RawTouch>().TouchDown().Then().TouchUp().End();
+		cmd.Parse(new RawTouch { phase = TouchPhase.Began } );
+		AssertEquals(cmd.status, GParserStatus.inconclusive);
+	}
+
+	public void TestFunctionalPlayground_MultistepCommands()
+	{
+		var cmd = new GParserPhrase<RawTouch>().TouchDown().Then().TouchUp().End();
+		
+		cmd.Parse(new RawTouch { phase = TouchPhase.Began } );
+		cmd.Parse(new RawTouch { phase = TouchPhase.Ended } );
+		AssertEquals(cmd.status, GParserStatus.success);
+	}
+	
+	public void TestFunctionalPlayground_MultistepCommands_failiure()
+	{
+		var cmd = new GParserPhrase<RawTouch>().TouchDown().Then().TouchUp().End();
+		
+		cmd.Parse(new RawTouch { phase = TouchPhase.Began } );
+		cmd.Parse(new RawTouch { phase = TouchPhase.Began } );
+		AssertEquals(cmd.status, GParserStatus.failed);
+	}
+	
+	public void TestFunctionalPlayground_NestedCommands()
+	{
+		var cmdTdTd = new GParserPhrase<RawTouch>().TouchDown().Then().TouchDown().End();
+		var cmd = new GParserPhrase<RawTouch>().Cmd(cmdTdTd).Then().TouchUp().End();
+		
+		cmd.Parse(new RawTouch { phase = TouchPhase.Began } );
+		cmd.Parse(new RawTouch { phase = TouchPhase.Began } );
+		cmd.Parse(new RawTouch { phase = TouchPhase.Ended } );
+		AssertEquals(cmd.status, GParserStatus.success);
+	}
+	
+	public void TestFunctionalPlayground_WaitForTouchUp_TimeLimitExcededReturnsFailure()
+	{
+		var cmd = new GParserPhrase<RawTouch>()
+			.TouchDown()
+			.ThenWithin(-10).TouchUp()
+			.End();
+		
+		cmd.Parse(new RawTouch { phase = TouchPhase.Began } );
+		cmd.Parse(new RawTouch { phase = TouchPhase.Moved } );
+		cmd.Parse(new RawTouch { phase = TouchPhase.Stationary } );
+		cmd.Parse(new RawTouch { phase = TouchPhase.Ended } );
+		AssertEquals(cmd.status, GParserStatus.failed);
+	}
+	
+	public void TestFunctionalPlayground_WaitForTouchUp_TimeLimitNotExceededReturnsSuccess()
+	{
+		var cmd = new GParserPhrase<RawTouch>()
+			.TouchDown()
+			.ThenWithin(100).TouchUp()
+			.End();
+		
+		cmd.Parse(new RawTouch { phase = TouchPhase.Began } );
+		cmd.Parse(new RawTouch { phase = TouchPhase.Moved } );
+		cmd.Parse(new RawTouch { phase = TouchPhase.Stationary } );
+		cmd.Parse(new RawTouch { phase = TouchPhase.Ended } );
+		AssertEquals(cmd.status, GParserStatus.success);
+	}	
+	
 	private RawTouch MakeRawTouchDown()
 	{
 		return new RawTouch() {

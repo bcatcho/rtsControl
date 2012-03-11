@@ -1,11 +1,10 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" ActiveRuntime="Mono 2.10.2" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/CTScripts/CTGameInput/CTGestureInterpreter.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" ActiveRuntime="Mono 2.10.8" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/CTScripts/CTGameInput/CTGestureCommandEvaluators.cs">
     <Files>
-      <File FileName="Assets/CTScripts/CTTest/CTTestInput/CTTestGestureCommandHarness.cs" Line="164" Column="54" />
-      <File FileName="Assets/CTScripts/CTGameInput/CTGestureInterpreter.cs" Line="56" Column="1" />
-      <File FileName="Assets/CTScripts/CTGameInput/CTGestureCommandEvaluators.cs" Line="7" Column="2" />
-      <File FileName="Assets/CTScripts/CTGameInput/InputManager.cs" Line="6" Column="1" />
+      <File FileName="Assets/CTScripts/CTGameInput/CTGestureCommand.cs" Line="71" Column="2" />
+      <File FileName="Assets/CTScripts/CTTest/CTTestInput/CTTestGestureCommandHarness.cs" Line="185" Column="22" />
+      <File FileName="Assets/CTScripts/CTGameInput/CTGestureCommandEvaluators.cs" Line="135" Column="2" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -14,7 +13,7 @@
             <Node name="Assets" expanded="True">
               <Node name="CTScripts" expanded="True">
                 <Node name="CTGameInput" expanded="True">
-                  <Node name="CTGestureInterpreter.cs" selected="True" />
+                  <Node name="CTGestureCommandEvaluators.cs" selected="True" />
                 </Node>
                 <Node name="CTTest" expanded="True">
                   <Node name="CTTestInput" expanded="True" />

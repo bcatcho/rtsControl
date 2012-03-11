@@ -65,3 +65,8 @@ public partial class CTGestureCommand
 		return this;
 	}
 }
+
+public static class CTGestureCommandExtensions
+{
+	
+}
