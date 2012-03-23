@@ -3,143 +3,32 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System;
 
-#region non-functional
-public partial class CTGestureCommand
-{
-	public CTGestureCommand Then{
-		get{
-			children.Add(new CTGestureCommandTerminal());
-			return this;
-		}
-	}
-	
-	public CTGestureCommand Any(Expression<Func<CTGestureCommand,CTGestureCommand>> expr)
-	{
-		var compiled = expr.Compile();
-		var cmd = compiled(new CTGestureCommand("tmp"));
-		var anyCmd = new CTGestureCommandAny(cmd.Children());
-		children.Add(anyCmd);
-		return this;
-	}
-	
-	public CTGestureCommand TouchDown()
-	{
-		children.Add(new CTGestureCommandTouchDown());
-		return this;
-	}
-	
-	public CTGestureCommand TouchMoved()
-	{
-		children.Add(new CTGestureCommandTouchMoved());
-		return this;
-	}
-	
-	public CTGestureCommand TouchUp()
-	{
-		children.Add(new CTGestureCommandTouchUp());
-		return this;
-	}
-	
-	// TODO: Reconsider this. This is very counterintuitive.
-	public static CTGestureCommand operator +(CTGestureCommand cmd1, CTGestureCommand cmd2)
-	{
-		cmd1.Add(cmd2);
-		return cmd1;
-	}
-}
-
-public class CTGestureCommandTerminal : CTGestureCommand
-{
-	public CTGestureCommandTerminal() : base("Terminal") {}
-	
-	public override CTGestureCommandResult Process(RawTouch t)
-	{
-		return CTGestureCommandResult.terminal;
-	}
-}
-
-public class CTGestureCommandTouchDown : CTGestureCommand
-{
-	public CTGestureCommandTouchDown() : base("TouchDown") {}
-	
-	public override CTGestureCommandResult Process(RawTouch t)
-	{
-		if (t.phase == TouchPhase.Began)
-			return CTGestureCommandResult.gestureRecognized;
-		
-		return CTGestureCommandResult.failed;
-	}
-}
-
-public class CTGestureCommandTouchUp : CTGestureCommand
-{
-	public CTGestureCommandTouchUp() : base("TouchUp") {}
-	
-	public override CTGestureCommandResult Process(RawTouch t)
-	{
-		if (t.phase == TouchPhase.Ended)
-			return CTGestureCommandResult.gestureRecognized;
-		
-		return CTGestureCommandResult.failed;
-	}
-}
-
-public class CTGestureCommandTouchMoved : CTGestureCommand
-{
-	public CTGestureCommandTouchMoved() : base("TouchMoved") {}
-	
-	public override CTGestureCommandResult Process(RawTouch t)
-	{
-		if (t.phase == TouchPhase.Moved)
-			return CTGestureCommandResult.gestureRecognized;
-		
-		return CTGestureCommandResult.failed;
-	}
-}
-
-public class CTGestureCommandAny : CTGestureCommand
-{
-	public CTGestureCommandAny(List<CTGestureCommand> commands) : base("Any") {
-		children.AddRange(commands);
-	}
-	
-	public override CTGestureCommandResult Process(RawTouch t)
-	{
-		foreach(var cmd in children)
-		{
-			if (cmd.Process(t) == CTGestureCommandResult.gestureRecognized)
-				return CTGestureCommandResult.needsMoreInput;
-		}
-		
-		return CTGestureCommandResult.gestureRecognized;
-}	
-}
-
-#endregion
-
-#region functional
-
 public enum GParserStatus {
-	failed,
-	inconclusive,
-	success
+	Failed,
+	Inconclusive,
+	Success
 }
 
-public class GParser<T>
+public static class GParserStatusExtensions
 {
-	public GParse<T> Parse;
-	public GParserStatus status;
-	public GParser()
+	public static GParserStatus Plus(this GParserStatus status1, GParserStatus status2)
 	{
+		if (status1 == GParserStatus.Failed || status2 == GParserStatus.Failed)
+			return GParserStatus.Failed;
+		
+		if (status1 == GParserStatus.Inconclusive || status2 == GParserStatus.Inconclusive)
+			return GParserStatus.Inconclusive;
+		
+		return GParserStatus.Success;
 	}
 }
 
-public delegate GParserStatus GParse<T>(GParserContext<T> context);
+public delegate GParserStatus GParser<T>(GParserContext<T> context);
 
 public class GParserCmd<T>
 {
 	public GParserCmd<T> next;
-	public GParse<T> parser;
+	public GParser<T> parser;
 	public GParserStatus status; 
 	public GParserContext<T> context;	
 	
@@ -169,15 +58,15 @@ public class GParserContext<T>
 	}
 }
 
-public class GParserPhrase<T>
+public class GParserCompiler<T>
 {
-	public GParserPhrase<T> previous;
-	public GParse<T> parser;
+	public GParserCompiler<T> previous;
+	public GParser<T> parser;
 }
 
-public static class GParserPhraseExtensions
+public static class GParserCompilerExtensions
 {
-	public static GParserCmd<T> End<T>(this GParserPhrase<T> me)
+	public static GParserCmd<T> End<T>(this GParserCompiler<T> me)
 	{
 		var currentPhrase = me;
 		GParserCmd<T> cmd = null;
@@ -192,48 +81,66 @@ public static class GParserPhraseExtensions
 		return cmd;
 	}
 	
-	public static GParserPhrase<T> TouchDown<T>(this GParserPhrase<T> me) where T : RawTouch
+	public static GParserCompiler<T> TouchDown<T>(this GParserCompiler<T> me) where T : RawTouch
 	{
-		GParse<T> f = t => t.current.phase == TouchPhase.Began ? GParserStatus.success : GParserStatus.failed;
-		me.And(f);
-		return me;
+		GParser<T> f = t => t.current.phase == TouchPhase.Began ? GParserStatus.Success : GParserStatus.Failed;
+		return me.And(f);
 	}
 
-	public static GParserPhrase<T> TouchUp<T>(this GParserPhrase<T> me) where T : RawTouch
+	public static GParserCompiler<T> TouchUp<T>(this GParserCompiler<T> me) where T : RawTouch
 	{
-		GParse<T> f = t => t.current.phase == TouchPhase.Ended ? GParserStatus.success : GParserStatus.failed;
-		me.And(f);
-		return me;
+		GParser<T> f = t => t.current.phase == TouchPhase.Ended ? GParserStatus.Success : GParserStatus.Failed;
+		return me.And(f);
 	}
 	
-	public static GParserPhrase<T> Cmd<T>(this GParserPhrase<T> me, GParserCmd<T> cmd) 
+	public static GParserCompiler<T> Cmd<T>(this GParserCompiler<T> me, GParserCmd<T> cmd) 
 	{
-		me.And(cmd);
-		return me;
+		return me.And(cmd);
 	}
 	
-	public static GParserPhrase<T> Then<T>(this GParserPhrase<T> me)
+	public static GParserCompiler<T> Then<T>(this GParserCompiler<T> me)
 	{
-		return new GParserPhrase<T>{ previous = me };	
+		return new GParserCompiler<T>{ previous = me };	
 	}
 	
-	public static GParserPhrase<T> ThenWithin<T>(this GParserPhrase<T> me, float milliseconds) where T : RawTouch
+	public static GParserCompiler<T> ThatStartsWithin<T>(this GParserCompiler<T> me, float milliseconds) where T : RawTouch
 	{
-		GParse<T> parser = ctx => {
+		var madeItThroughOnce = false;
+		GParser<T> parser = ctx => {
+			if (madeItThroughOnce)
+				return GParserStatus.Success;
+			
 			var time0 = ctx.parsed[ctx.start].time;
-			return ctx.current.time - time0 > milliseconds ? GParserStatus.failed : GParserStatus.success;
+			if (ctx.current.time - time0 <= milliseconds)
+			{
+				madeItThroughOnce = true;
+				return GParserStatus.Success;
+				
+			}
+			
+			return GParserStatus.Failed;
 		};
 		
-		return new GParserPhrase<T> { previous = me, parser = parser };
+		return me.And(parser);
+	}
+	
+	public static GParserCompiler<T> ThenWithin<T>(this GParserCompiler<T> me, float milliseconds) where T : RawTouch
+	{
+		GParser<T> parser = ctx => {
+			var time0 = ctx.parsed[ctx.start].time;
+			return ctx.current.time - time0 > milliseconds ? GParserStatus.Failed : GParserStatus.Success;
+		};
+		
+		return new GParserCompiler<T> { previous = me, parser = parser };
 	}
 
-	public static GParserPhrase<T> And<T>(this GParserPhrase<T> me, GParse<T> p)
+	public static GParserCompiler<T> And<T>(this GParserCompiler<T> me, GParser<T> p)
 	{
 		me.parser = me.parser.And(p);
 		return me;
 	}
 	
-	public static GParserPhrase<T> And<T>(this GParserPhrase<T> me, GParserCmd<T> cmd)
+	public static GParserCompiler<T> And<T>(this GParserCompiler<T> me, GParserCmd<T> cmd)
 	{
 		me.parser = me.parser.And(cmd);
 		return me;
@@ -248,11 +155,11 @@ public static class GParserCmdExtensions
 		me.context.current = t;
 		me.status = me.parser(me.context);
 		me.context.parsed.Add(t); 
-		if (me.status == GParserStatus.success)
+		if (me.status == GParserStatus.Success)
 		{
 			if (me.next != null)
 			{
-				me.status = GParserStatus.inconclusive;
+				me.status = GParserStatus.Inconclusive;
 				me.parser = me.next.parser;
 				me.next = me.next.next;
 				me.context.start = me.context.parsed.Count - 1;
@@ -268,18 +175,21 @@ public static class GParserCmdExtensions
 
 public static class GParseExtensions
 {
-	public static GParse<A> And<A>(this GParse<A> pMe, GParse<A> pNext)
+	public static GParser<T> And<T>(this GParser<T> pMe, GParser<T> pNext)
 	{
 		if (pMe == null) 
 			return pNext;
 				
 		return input => {
 			var result = pMe(input);
-			return result == GParserStatus.success ? pNext(input) : result;
+			if (result == GParserStatus.Failed)
+				return result;
+			
+			return result.Plus(pNext(input));
 		};
 	}
 	
-	public static GParse<T> And<T>(this GParse<T> pMe, GParserCmd<T> cmd)
+	public static GParser<T> And<T>(this GParser<T> pMe, GParserCmd<T> cmd)
 	{
 		if (pMe == null) 
 		{	
@@ -290,16 +200,11 @@ public static class GParseExtensions
 		}
 		return input => {
 			var result = pMe(input);
-			if (result == GParserStatus.success)
-			{
-				cmd.Parse(input);
-				return cmd.status;
-			}
+			if (result == GParserStatus.Failed)
+				return result;
 			
-			return result;
+			cmd.Parse(input);
+			return result.Plus(cmd.status);
 		};
 	}
-	
 }
-
-#endregion

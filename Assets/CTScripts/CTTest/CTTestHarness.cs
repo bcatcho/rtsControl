@@ -1,18 +1,25 @@
 using UnityEngine;
 using System.Collections;
 using System.Reflection;
+using System.Linq;
 
 public class CTTestHarness : MonoBehaviour {
-	public void RunTests<T>(object obj)
+	
+	private void RunTests()
 	{
-		MethodInfo[] methodInfos = typeof(T).GetMethods();
+		MethodInfo[] methodInfos = this.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly) ;
 		foreach(var info in methodInfos)
 		{
-			if (info.Name.StartsWith("Test"))
+			if (!info.IsDefined(typeof(CTTestIgnore), true))
 			{
-				info.Invoke(obj, null);
+				info.Invoke(this, null);
 			}
 		}
+	}
+	
+	public virtual void Start()
+	{
+		RunTests();
 	}
 	
 	#region Test Utilities
@@ -24,4 +31,11 @@ public class CTTestHarness : MonoBehaviour {
 	}
 	
 	#endregion
+}
+
+
+[System.AttributeUsage(System.AttributeTargets.Method)]
+public class CTTestIgnore : System.Attribute
+{
+    public CTTestIgnore() {}
 }

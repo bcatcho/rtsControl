@@ -7,7 +7,8 @@ public class CTTestInputHarness : CTTestHarness {
 	private CTTestInputPlayer _player;
 	public bool isRecording;
 	
-	void Start () {
+	[CTTestIgnore]
+	public override void Start() {
 		_recorder = new CTTestInputRecorder();
 		_display = new CTTestInputDisplay(gameObject);
 		_player = new CTTestInputPlayer();
@@ -22,11 +23,13 @@ public class CTTestInputHarness : CTTestHarness {
 		}
 	}
 	
+	[CTTestIgnore]
 	public void Play()
 	{
 		_player.StartPlaying();	
 	}
-	
+
+	[CTTestIgnore]
 	void Update()
 	{
 		if (!isRecording)
