@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class CTGestureParser 
 {
@@ -30,11 +31,12 @@ public class CTGestDef
 	}
 }
 
-public class CTGestureParserToken
+public class CTGestureParserToken : System.IEquatable<CTGestureParserToken>
 {
 	public string name;
 	public CTGestParserTokenType tokenType;
 	public List<string> parameters;
+	
 	public CTGestureParserToken(string name, CTGestParserTokenType tokenType)
 	{
 		this.name = name;
@@ -50,6 +52,24 @@ public class CTGestureParserToken
 			str += "(" + string.Join(", ", parameters.ToArray()) + ")";
 		}
 		return str;		
+	} 
+
+	public override int GetHashCode()
+	{
+		return (int)tokenType * name.GetHashCode();
+	}
+	
+	public bool Equals(CTGestureParserToken other)
+	{
+		return name == other.name && tokenType == other.tokenType && parameters.SequenceEqual(other.parameters);
+	}
+}
+
+public static class CTGestureParserTokenFactory
+{
+	public static CTGestureParserToken Then()
+	{
+		return new CTGestureParserToken(">", CTGestParserTokenType.binary);	
 	}
 }
 
@@ -99,7 +119,7 @@ public static class CTGestDefExtensions
 	
 	public static CTGestDef Then(this CTGestDef me)
 	{
-		return me.AddFluent(new CTGestureParserToken(">", CTGestParserTokenType.binary));	
+		return me.AddFluent(CTGestureParserTokenFactory.Then());	
 	}
 }
 

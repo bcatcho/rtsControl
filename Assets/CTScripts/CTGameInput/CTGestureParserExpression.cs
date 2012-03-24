@@ -6,6 +6,7 @@ using System.Linq;
 public class CTGestureParserExpression : IEnumerable<CTGestureParserExpression>
 {
 	private List<CTGestureParserToken> _tokens;
+	
 	public List<CTGestureParserToken> Tokens()
 	{
 		return _tokens;	
@@ -27,7 +28,12 @@ public class CTGestureParserExpression : IEnumerable<CTGestureParserExpression>
 		expr1._tokens.Add(t);
 		return expr1;
 	}
-
+	
+	public bool Equals(CTGestureParserExpression expr2)
+	{
+		return _tokens.SequenceEqual(expr2._tokens);
+	}
+	
 	public IEnumerator<CTGestureParserExpression> GetEnumerator()
 	{
 		var subExpression = new CTGestureParserExpression();

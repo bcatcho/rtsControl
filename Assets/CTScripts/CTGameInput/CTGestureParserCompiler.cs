@@ -42,17 +42,14 @@ public class CTGestureParserCompiler
 		var graph = new CTGestureParserGraph();
 		foreach (var def in definitions.Values)
 		{
-			var reduced = ReduceDefinition(def);
-			foreach (var subExpression in reduced)
+			foreach (var subExpression in ReduceDefinition(def))
 			{
-				graph.AddNodeForEvals(subExpression);
+				graph.AddExpression(subExpression);
 			}
-			
 			graph.AddTerminal(def.name);	
 			graph.Rewind();
 		}
 		
 		return graph;
 	}
-	
 }

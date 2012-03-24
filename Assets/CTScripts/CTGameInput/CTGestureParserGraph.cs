@@ -18,90 +18,21 @@ public class CTGestureParserGraph
 		current = root;
 	}
 	
-	public void Advance()
+	public void AddExpression(CTGestureParserExpression expr)
 	{
-		current = current.pass;	
+		current = current.AddBranch(expr);
 	}
-	
-	public void AddNodeForEvals(CTGestureParserExpression expr)
-	{
-		var evalsString = expr.ToTokenString();
-		var currentTokenString = current.ToTokenString();
 		
-		if (current.nodeType == CTGestParserGraphNodeType.terminal)
-		{
-			Graph_RewindAndDiverge();
-			AddNodeForEvals(expr); // and try again
-		}
-		// you match the current node
-		else if (evalsString == current.ToTokenString())
-		{
-			Graph_AdvanceOnDuplicate();
-		}
-		// the current node is not blank, but it doesn't match what you are doing
-		else if (currentTokenString != string.Empty && evalsString != currentTokenString)
-		{
-			if (current.Overlaps(expr))
-			{
-				
-			}
-		}
-		// the current node is blank
-		else if (currentTokenString == string.Empty)
-		{
-			Graph_AppendNewEvals(expr);
-		}
-		else
-		{
-			Debug.LogError("unexpected state encountered");
-		}
-	}
-	
-	private void Graph_AdvanceOnDuplicate()
-	{
-		current = current.pass;
-	}
-
-	private void Graph_RewindAndDiverge()
-	{
-		current = current.parent; // backtrack
-		// HACK: blindly hoping that current is the end of a gesture
-		if (current.fail == null)
-		{	
-			current.fail = new CTGestureParserGraphNode(current);
-		}
-		current = current.fail; // set current to a non terminal
-	}
-
-	private void Graph_AppendNewEvals(CTGestureParserExpression expr)
-	{
-		current.expr += expr;
-		current.pass = new CTGestureParserGraphNode(current);
-		current = current.pass;
-	}
-	
 	public void AddTerminal(string terminalName)
 	{
-		current.nodeType = CTGestParserGraphNodeType.terminal;
-		current.terminalName = terminalName;
-	}
-	
-	public CTGestureParserGraphNode CurrentNode()
-	{
-		return current;
+		current.AddTerminal(terminalName);
 	}
 
-	public CTGestureParserGraph Pass()
+	public CTGestureParserGraph GoBranch(int index = 0)
 	{
-		current = current.pass;
+		current = current.branches[index];
 		return this;
-	}
-	
-	public CTGestureParserGraph Fail()
-	{
-		current = current.fail;
-		return this;
-	}
+	}	
 	
 	public string GetCurrentTokenString()
 	{
@@ -112,8 +43,7 @@ public class CTGestureParserGraph
 public class CTGestureParserGraphNode
 {
 	public CTGestureParserExpression expr;
-	public CTGestureParserGraphNode pass;
-	public CTGestureParserGraphNode fail;
+	public List<CTGestureParserGraphNode> branches;
 	public CTGestureParserGraphNode parent;
 	public CTGestParserGraphNodeType nodeType;
 	public string terminalName;
@@ -121,20 +51,53 @@ public class CTGestureParserGraphNode
 	public CTGestureParserGraphNode(CTGestureParserGraphNode parent = null)
 	{
 		this.parent = parent;
+		branches = new List<CTGestureParserGraphNode>();
 		expr = new CTGestureParserExpression();
+	}
+	
+	public CTGestureParserGraphNode AddBranch(CTGestureParserExpression expression)
+	{
+		// if you are trying to chain on to a terminal, back track and chain from there.
+		// this happens with subcommands
+		if (this.nodeType == CTGestParserGraphNodeType.terminal)
+		{
+			return parent.AddBranch(expression);
+		}
+		
+		foreach (var b in branches)
+		{
+			if (b.expr.Equals(expression))
+			{
+				return b;	
+			}
+		}
+		
+		branches.Add(new CTGestureParserGraphNode(this) {
+			expr = expression,
+		});
+		
+		return branches.Last();
+	}
+	
+	public void AddTerminal(string terminalName)
+	{
+		if (branches.Count > 0)
+			Debug.LogError("Can't end gesture in the middle of another");
+		else if (this.terminalName != null)
+			Debug.LogError(string.Format("Duplicate gestures exist. Tried to terminate {0}, but found the terminal for {1}", terminalName, this.terminalName));
+		else
+		{
+			this.terminalName = terminalName;
+			nodeType = CTGestParserGraphNodeType.terminal;
+		}
 	}
 	
 	public string ToTokenString()
 	{
 		if (nodeType == CTGestParserGraphNodeType.terminal)
-			return "$"+terminalName;
+			return expr.ToTokenString() +" $"+terminalName;
 		
 		return expr.ToTokenString();
-	}
-
-	public bool Overlaps(CTGestureParserExpression expr)
-	{
-		return false;
 	}
 }
 

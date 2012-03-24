@@ -52,7 +52,7 @@ public class CTTestGestureParserHarness : CTTestHarness
 		
 		var graph = compiler.Compile();
 		
-		AssertEquals(graph.CurrentNode().ToTokenString(), "touchDown touchUp");
+		AssertEquals(graph.GoBranch().GetCurrentTokenString(), "touchDown touchUp $tap");
 	}
 	
 	public void CTGestParserCompilerBuildGraph__EvalThenEval__MakesTwoGraphNodes()
@@ -63,10 +63,8 @@ public class CTTestGestureParserHarness : CTTestHarness
 		
 		var graph = compiler.Compile();
 		
-		AssertEquals(graph.CurrentNode().ToTokenString(), "touchDown");
-		
-		graph.Advance();
-		AssertEquals(graph.CurrentNode().ToTokenString(), "touchUp");
+		AssertEquals(graph.GoBranch().GetCurrentTokenString(), "touchDown");
+		AssertEquals(graph.GoBranch().GetCurrentTokenString(), "touchUp $tap");
 	}
 	
 	public void CTGestParserCompilerBuildGraph__WholeGesture__EndsWithATerminal()
@@ -76,28 +74,44 @@ public class CTTestGestureParserHarness : CTTestHarness
 		});
 		
 		var graph = compiler.Compile();	
-		graph.Advance();
-		graph.Advance();
-		AssertEquals(graph.CurrentNode().ToTokenString(), "$tap");
+		graph.GoBranch().GoBranch();
+		AssertEquals(graph.GetCurrentTokenString(), "touchUp $tap");
 	}
 	
 	public void CTGestParserCompilerBuildGraph__TwoOverlappingGestures__SecondGestureAttachedToTheFailParamOfFirst()
 	{
 		var compiler = BuildCompiler(new List<CTGestDef>{
-			"tap".GestDef().TouchDown().Then().TouchUp().Then().EndAfter(50),
+			"tap".GestDef().TouchDown().Then().TouchUp().Then().EndAfter(50), // this is an issue. the sub commands also use this
 			"doubleTap".GestDef().Def("tap").Then().Def("tap")
 		});
 		
 		var graph = compiler.Compile();
-		graph.Pass().Pass().Pass();
-		AssertEquals(graph.GetCurrentTokenString(), "$tap");
+		graph.GoBranch().GoBranch().GoBranch();
+		AssertEquals(graph.GetCurrentTokenString(), "endAfter(50) $tap");
 		
 		graph.Rewind();
-		graph.Pass().Pass().Fail(); // fail to be a tap -> head towards double tap
-		graph.Pass().Pass().Pass();
-		AssertEquals(graph.GetCurrentTokenString(), "$doubleTap");
+		graph.GoBranch() // ->touchdown
+			.GoBranch()  // ->touchup
+			.GoBranch(1) // ->touchdown
+			.GoBranch()  // ->touchUp
+			.GoBranch(); // ->endAfter
+		AssertEquals(graph.GetCurrentTokenString(), "endAfter(50) $doubleTap");
 	}
 	
+	public void CTGestParserCompilerBuildGraph__TwoOverlappingGesturesAndASimilarThird__SplitsTheGraphWhereSimilar()
+	{
+		var compiler = BuildCompiler(new List<CTGestDef>{
+			"tap".GestDef().TouchDown().Then().TouchUp().Then().EndAfter(50),
+			"doubleTap".GestDef().Def("tap").Then().Def("tap"),
+			"tapish".GestDef().TouchDown().Then().Stationary().Then().EndAfter(50)
+		});
+		
+		var graph = compiler.Compile();
+		graph.GoBranch() // touchdown
+			.GoBranch(1) // stationary
+			.GoBranch(); // end after
+		AssertEquals(graph.GetCurrentTokenString(), "endAfter(50) $tapish");
+	}
 	
 	
 	[CTTestIgnore]
